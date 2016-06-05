@@ -619,8 +619,8 @@ bit_t LMIC_setupChannel (u1_t chidx, u4_t freq, u2_t drmap, s1_t band) {
             freq |= BAND_DECI;   // 10% 27dBm
         else if( (freq >= 868000000 && freq <= 868600000) ||
                  (freq >= 869700000 && freq <= 870000000)  )
-            freq |= BAND_CENTI;  // 1% 14dBm 
-        else 
+            freq |= BAND_CENTI;  // 1% 14dBm
+        else
             freq |= BAND_MILLI;  // 0.1% 14dBm
     } else {
         if( band > BAND_AUX ) return 0;
@@ -1442,7 +1442,7 @@ static bit_t processJoinAccept (void) {
                         e_.reason  = ((LMIC.opmode & OP_REJOIN) != 0
                                       ? EV::joininfo_t::REJOIN_ACCEPT
                                       : EV::joininfo_t::ACCEPT)));
-    
+
     ASSERT((LMIC.opmode & (OP_JOINING|OP_REJOIN))!=0);
     if( (LMIC.opmode & OP_REJOIN) != 0 ) {
         // Lower DR every try below current UP DR
@@ -1724,6 +1724,7 @@ void LMIC_disableTracking (void) {
     LMIC.bcninfoTries = 0;
     engineUpdate();
 }
+#endif
 
 
 // ================================================================================
@@ -1779,6 +1780,7 @@ bit_t LMIC_startJoining (void) {
     return 0; // already joined
 }
 
+#if defined(LORAWAN_CLASSB)
 
 // ================================================================================
 //
@@ -2217,11 +2219,11 @@ void LMIC_setSession (u4_t netid, devaddr_t devaddr, xref2u1_t nwkKey, xref2u1_t
         os_copyMem(LMIC.nwkKey, nwkKey, 16);
     if( artKey != (xref2u1_t)0 )
         os_copyMem(LMIC.artKey, artKey, 16);
-    
+
 #if defined(CFG_eu868)
     initDefaultChannels(0);
 #endif
- 
+
     LMIC.opmode &= ~(OP_JOINING|OP_TRACK|OP_REJOIN|OP_TXRXPEND|OP_PINGINI);
     LMIC.opmode |= OP_NEXTCHNL;
     stateJustJoined();
