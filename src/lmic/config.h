@@ -2,7 +2,8 @@
 #define _lmic_config_h_
 
 // Chose a frequency plan
-#define CFG_eu868 1
+#define CFG_kotahi 1
+//#define CFG_eu868 1
 //#define CFG_us915 1
 
 // Choose a radio backend
