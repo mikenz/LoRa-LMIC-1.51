@@ -90,10 +90,7 @@ void AES_Encrypt(unsigned char *Data, unsigned char *Key)
 	}
 
 	//Copy key to round key
-	for(i = 0; i < 16; i++)
-	{
-		Round_Key[i] = Key[i];
-	}
+	CopyArray(Key, Round_Key);
 
 	//Add round key
 	AES_Add_Round_Key(Round_Key);
@@ -139,7 +136,7 @@ void AES_Encrypt(unsigned char *Data, unsigned char *Key)
 	//Calculate new round key
 	AES_Calculate_Round_Key(Round,Round_Key);
 
-  //Add round Key
+	//Add round Key
 	AES_Add_Round_Key(Round_Key);
 
 	//Copy the State into the data array
@@ -184,10 +181,10 @@ void AES_Add_Round_Key(unsigned char *Round_Key)
 */
 unsigned char AES_Sub_Byte(unsigned char Byte)
 {
-	unsigned char S_Row,S_Collum;
+	unsigned char S_Row, S_Collum;
 	unsigned char S_Byte;
 
-  //Split byte up in Row and Collum
+	//Split byte up in Row and Collum
 	S_Row = ((Byte >> 4) & 0x0F);
 	S_Collum = (Byte & 0x0F);
 
@@ -277,37 +274,28 @@ void AES_Calculate_Round_Key(unsigned char Round, unsigned char *Round_Key)
 	unsigned char i,j;
 	unsigned char b;
 	unsigned char Temp[4];
-	unsigned char Buffer;
 	unsigned char Rcon;
 
-	//Calculate first Temp
-	//Copy laste byte from previous key
-	for(i = 0; i < 4; i++)
-	{
-		Temp[i] = Round_Key[i+12];
-	}
-
-	//Rotate Temp
-	Buffer = Temp[0];
-	Temp[0] = Temp[1];
-	Temp[1] = Temp[2];
-	Temp[2] = Temp[3];
-	Temp[3] = Buffer;
+	// Calculate first Temp
+	// Copy last byte from previous key
+	// And Rotate in one go
+	Temp[0] = Round_Key[13];
+	Temp[1] = Round_Key[14];
+	Temp[2] = Round_Key[15];
+	Temp[3] = Round_Key[12];
 
 	//Substitute Temp
-	for(i = 0; i < 4; i++)
-	{
-		Temp[i] = AES_Sub_Byte(Temp[i]);
-	}
+	Temp[0] = AES_Sub_Byte(Temp[0]);
+	Temp[1] = AES_Sub_Byte(Temp[1]);
+	Temp[2] = AES_Sub_Byte(Temp[2]);
+	Temp[3] = AES_Sub_Byte(Temp[3]);
 
 	//Calculate Rcon
 	Rcon = 0x01;
-	while(Round != 1)
-	{
+	while (Round != 1) {
 		b = Rcon & 0x80;
 		Rcon = Rcon << 1;
-		if(b == 0x80)
-		{
+		if (b == 0x80) {
 			Rcon = Rcon ^ 0x1b;
 		}
 		Round--;
@@ -326,3 +314,14 @@ void AES_Calculate_Round_Key(unsigned char Round, unsigned char *Round_Key)
 		}
 	}
 }
+
+
+// Copy from one array to another
+void CopyArray(unsigned char *from, unsigned char *to)
+{
+	unsigned char i;
+	for (i = 0; i < 16; i++) {
+		to[i] = from[i];
+	}
+}
+

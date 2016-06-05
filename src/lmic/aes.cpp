@@ -86,8 +86,10 @@ u4_t os_aes (u1_t mode, xref2u1_t buf, u2_t len) {
 		//for (i=0; i< len; i++) { Serial.print(coded[i],HEX); Serial.print(" "); } Serial.println();
 		return(0);
 	break;
-	default:
-		Serial.print(F("os_aes: Unknown mode: ")); Serial.println(mode);
+//	default:
+		//Serial.print(F("os_aes: Unknown mode: ")); 
+		//Serial.println(mode);
+
   }
   return(1);
 }

@@ -49,7 +49,7 @@ extern u4_t DevAddr;
 // --------------------------------------------------------------------
 void Encrypt_Payload(unsigned char *Data, unsigned char Data_Length, unsigned int Frame_Counter, unsigned char Direction)
 {
-	unsigned char i = 0x00;
+	unsigned char i = 1;
 	unsigned char j;
 	unsigned char Number_of_Blocks = 0x00;
 	unsigned char Incomplete_Block_Size = 0x00;
@@ -64,8 +64,7 @@ void Encrypt_Payload(unsigned char *Data, unsigned char Data_Length, unsigned in
 		Number_of_Blocks++;
 	}
 
-	for(i = 1; i <= Number_of_Blocks; i++)
-	{
+	for(i = 1; i <= Number_of_Blocks; i++) {
 		Block_A[0] = 0x01;
 		Block_A[1] = 0x00;
 		Block_A[2] = 0x00;
@@ -89,28 +88,25 @@ void Encrypt_Payload(unsigned char *Data, unsigned char Data_Length, unsigned in
 
 		Block_A[15] = i;
 
-		//Calculate S
-		//AES_Encrypt(Block_A,NwkSkey);
-		AES_Encrypt(Block_A, AppSkey);					// This was also fixed in the recent 31 release of this software
+		// Calculate S
+		AES_Encrypt(Block_A, AppSkey);
 		
 
 		//Check for last block
 		if(i != Number_of_Blocks)
 		{
-			for(j = 0; j < 16; j++)
-			{
+			for(j = 0; j < 16; j++) {
 				*Data = *Data ^ Block_A[j];
 				Data++;
 			}
 		}
 		else
 		{
-			if(Incomplete_Block_Size == 0)
-			{
+			if (Incomplete_Block_Size == 0) {
 				Incomplete_Block_Size = 16;
 			}
-			for(j = 0; j < Incomplete_Block_Size; j++)
-			{
+			
+			for(j = 0; j < Incomplete_Block_Size; j++) {
 				*Data = *Data ^ Block_A[j];
 				Data++;
 			}
@@ -124,7 +120,20 @@ void Encrypt_Payload(unsigned char *Data, unsigned char Data_Length, unsigned in
 void Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC, unsigned char Data_Length, unsigned int Frame_Counter, unsigned char Direction)
 {
 	unsigned char i;
-	unsigned char Block_B[16];
+	unsigned char Block_B[16] = {
+		0x49, 0x00, 0x00, 0x00, 0x00,   // 0-4
+		Direction,   					//  5
+		(unsigned char)DevAddr,     	//  6
+		(unsigned char)(DevAddr>>8),  	//  7
+		(unsigned char)(DevAddr>>16), 	//  8
+		(unsigned char)(DevAddr>>24), 	//  9
+		(unsigned char)(Frame_Counter & 0x00FF), 		// 10
+		(unsigned char)((Frame_Counter >> 8) & 0x00FF), // 11
+		0x00, 							// 12 Frame counter upper bytes
+		0x00,							// 13
+		0x00,							// 14
+		Data_Length						// 15
+	};
 	unsigned char Key_K1[16] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -133,8 +142,6 @@ void Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC, unsigned char 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
-
-	//unsigned char Data_Copy[16];
 
 	unsigned char Old_Data[16] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -145,76 +152,41 @@ void Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC, unsigned char 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
 
-	unsigned char Number_of_Blocks = 0x00;
-	unsigned char Incomplete_Block_Size = 0x00;
 	unsigned char Block_Counter = 0x01;
 
-	//Create Block_B
-	Block_B[0] = 0x49;
-	Block_B[1] = 0x00;
-	Block_B[2] = 0x00;
-	Block_B[3] = 0x00;
-	Block_B[4] = 0x00;
-
-	Block_B[5] = Direction;
-
-	Block_B[6] = DevAddr;
-	Block_B[7] = DevAddr>>8;
-	Block_B[8] = DevAddr>>16;
-	Block_B[9] = DevAddr>>24;
-
-	Block_B[10] = (Frame_Counter & 0x00FF);
-	Block_B[11] = ((Frame_Counter >> 8) & 0x00FF);
-
-	Block_B[12] = 0x00; //Frame counter upper bytes
-	Block_B[13] = 0x00;
-
-	Block_B[14] = 0x00;
-	Block_B[15] = Data_Length;
-
 	//Calculate number of Blocks and blocksize of last block
-	Number_of_Blocks = Data_Length / 16;
-	Incomplete_Block_Size = Data_Length % 16;
-
-	if(Incomplete_Block_Size != 0)
-	{
+	unsigned char Number_of_Blocks = Data_Length / 16;
+	unsigned char Incomplete_Block_Size = Data_Length % 16;
+	if (Incomplete_Block_Size != 0) {
 		Number_of_Blocks++;
 	}
 
 	Generate_Keys(Key_K1, Key_K2);
 
-	//Preform Calculation on Block B0
+	// Preform Calculation on Block B0
 
-	//Perform AES encryption
+	// Perform AES encryption
 	AES_Encrypt(Block_B,NwkSkey);
 
-	//Copy Block_B to Old_Data
-	for(i = 0; i < 16; i++)
-	{
-		Old_Data[i] = Block_B[i];
-	}
+	// Copy Block_B to Old_Data
+	CopyArray(Block_B, Old_Data);
 
-	//Preform full calculating until n-1 messsage blocks
-	while(Block_Counter < Number_of_Blocks)
-	{
-		//Copy data into array
-		for(i = 0; i < 16; i++)
-		{
+	// Preform full calculating until n-1 messsage blocks
+	while(Block_Counter < Number_of_Blocks) {
+		// Copy data into array
+		for(i = 0; i < 16; i++) {
 			New_Data[i] = *Data;
 			Data++;
 		}
 
 		//Preform XOR with old data
-		XOR(New_Data,Old_Data);
+		XOR(New_Data, Old_Data);
 
 		//Preform AES encryption
-		AES_Encrypt(New_Data,NwkSkey);
+		AES_Encrypt(New_Data, NwkSkey);
 
-		//Copy New_Data to Old_Data
-		for(i = 0; i < 16; i++)
-		{
-			Old_Data[i] = New_Data[i];
-		}
+		// Copy from New_Data to Old_Data
+		CopyArray(New_Data, Old_Data);
 
 		//Raise Block counter
 		Block_Counter++;
@@ -222,52 +194,42 @@ void Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC, unsigned char 
 
 	//Perform calculation on last block
 	//Check if Datalength is a multiple of 16
-	if(Incomplete_Block_Size == 0)
-	{
+	if(Incomplete_Block_Size == 0) {
 		//Copy last data into array
-		for(i = 0; i < 16; i++)
-		{
+		for(i = 0; i < 16; i++) {
 			New_Data[i] = *Data;
 			Data++;
 		}
 
 		//Preform XOR with Key 1
-		XOR(New_Data,Key_K1);
+		XOR(New_Data, Key_K1);
 
 		//Preform XOR with old data
-		XOR(New_Data,Old_Data);
+		XOR(New_Data, Old_Data);
 
 		//Preform last AES routine
-		AES_Encrypt(New_Data,NwkSkey);
-	}
-	else
-	{
+		AES_Encrypt(New_Data, NwkSkey);
+	} else {
 		//Copy the remaining data and fill the rest
-		for(i =  0; i < 16; i++)
-		{
-			if(i < Incomplete_Block_Size)
-			{
+		for(i =  0; i < 16; i++) {
+			if (i < Incomplete_Block_Size) {
 				New_Data[i] = *Data;
 				Data++;
-			}
-			if(i == Incomplete_Block_Size)
-			{
+			} else if (i == Incomplete_Block_Size) {
 				New_Data[i] = 0x80;
-			}
-			if(i > Incomplete_Block_Size)
-			{
+			} else if (i > Incomplete_Block_Size) {
 				New_Data[i] = 0x00;
 			}
 		}
 
 		//Preform XOR with Key 2
-		XOR(New_Data,Key_K2);
+		XOR(New_Data, Key_K2);
 
 		//Preform XOR with Old data
-		XOR(New_Data,Old_Data);
+		XOR(New_Data, Old_Data);
 
 		//Preform last AES routine
-		AES_Encrypt(New_Data,NwkSkey);
+		AES_Encrypt(New_Data, NwkSkey);
 	}
 
 	Final_MIC[0] = New_Data[0];
@@ -281,101 +243,60 @@ void Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC, unsigned char 
 // --------------------------------------------------------------------
 void Generate_Keys(unsigned char *K1, unsigned char *K2)
 {
-	unsigned char i;
 	unsigned char MSB_Key;
 
 	//Encrypt the zeros in K1 with the NwkSkey
-	AES_Encrypt(K1,NwkSkey);
+	AES_Encrypt(K1, NwkSkey);
 
-	//Create K1
-	//Check if MSB is 1
-	if((K1[0] & 0x80) == 0x80)
-	{
-		MSB_Key = 1;
-	}
-	else
-	{
-		MSB_Key = 0;
-	}
+	// Create K1
+	// Check if MSB is 1
+	MSB_Key = ((K1[0] & 0x80) == 0x80) ? 1 : 0;
 
-	//Shift K1 one bit left
+	// Shift K1 one bit left
 	Shift_Left(K1);
 
-	//if MSB was 1
-	if(MSB_Key == 1)
-	{
+	// if MSB was 1
+	if (MSB_Key == 1) {
 		K1[15] = K1[15] ^ 0x87;
 	}
 
-	//Copy K1 to K2
-	for( i = 0; i < 16; i++)
-	{
-		K2[i] = K1[i];
-	}
+	// Copy K1 to K2
+	CopyArray(K1, K2);
 
-	//Check if MSB is 1
-	if((K2[0] & 0x80) == 0x80)
-	{
-		MSB_Key = 1;
-	}
-	else
-	{
-		MSB_Key = 0;
-	}
+	// Check if MSB is 1
+	MSB_Key = ((K2[0] & 0x80) == 0x80) ? 1 : 0;
 
-	//Shift K2 one bit left
+	// Shift K2 one bit left
 	Shift_Left(K2);
 
-	//Check if MSB was 1
-	if(MSB_Key == 1)
-	{
+	// Check if MSB was 1
+	if (MSB_Key == 1) {
 		K2[15] = K2[15] ^ 0x87;
 	}
 }
 
 // --------------------------------------------------------------------
-//
+// Shift all the bits lefts by one, overflowing from one byte to the next
 // --------------------------------------------------------------------
 void Shift_Left(unsigned char *Data)
 {
 	unsigned char i;
-	unsigned char Overflow = 0;
-	//unsigned char High_Byte, Low_Byte;
-
-	for(i = 0; i < 16; i++)
-	{
-		//Check for overflow on next byte except for the last byte
-		if(i < 15)
-		{
-			//Check if upper bit is one
-			if((Data[i+1] & 0x80) == 0x80)
-			{
-				Overflow = 1;
-			}
-			else
-			{
-				Overflow = 0;
-			}
-		}
-		else
-		{
-			Overflow = 0;
-		}
-
-		//Shift one left
-		Data[i] = (Data[i] << 1) + Overflow;
+	for(i = 0; i < 15; i++) {
+		// Shift one left and add overflow from the next byte
+		Data[i] = (Data[i] << 1) + (((Data[i + 1] & 0x80) == 0x80) ? 1 : 0);	
 	}
+	
+	// 16th round without overflow
+	Data[15] = (Data[15] << 1);
 }
 
 // --------------------------------------------------------------------
-//
+// XOR two arrays
 // --------------------------------------------------------------------
-void XOR(unsigned char *New_Data,unsigned char *Old_Data)
+void XOR(unsigned char *New_Data, unsigned char *Old_Data)
 {
 	unsigned char i;
-
-	for(i = 0; i < 16; i++)
-	{
+	for(i = 0; i < 16; i++) {
 		New_Data[i] = New_Data[i] ^ Old_Data[i];
 	}
 }

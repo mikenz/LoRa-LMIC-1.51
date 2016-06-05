@@ -34,5 +34,6 @@ void AES_Shift_Rows();
 void AES_Mix_Collums();
 void AES_Calculate_Round_Key(unsigned char Round, unsigned char *Round_Key);
 void Send_State();
+void CopyArray(unsigned char *from, unsigned char *to);
 
 #endif
