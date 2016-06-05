@@ -167,7 +167,7 @@ struct lmic_t {
     u1_t        txChnl;          // channel for next TX
     u1_t        globalDutyRate;  // max rate: 1/2^k
     ostime_t    globalDutyAvail; // time device can send again
-    
+
     u4_t        netid;        // current network id (~0 - none)
     u2_t        opmode;
     u1_t        upRepeat;     // configured up repeat
@@ -207,11 +207,13 @@ struct lmic_t {
     u4_t        dn2Freq;
     u1_t        dn2Ans;       // 0=no answer pend, 0x80+ACKs
 
+#if defined(LORAWAN_CLASSB)
     // Class B state
     u1_t        missedBcns;   // unable to track last N beacons
     u1_t        bcninfoTries; // how often to try (scan mode only)
     u1_t        pingSetAns;   // answer set cmd and ACK bits
     rxsched_t   ping;         // pingable setup
+#endif
 
     // Public part of MAC state
     u1_t        txCnt;
@@ -220,16 +222,18 @@ struct lmic_t {
     u1_t        dataLen;    // 0 no data or zero length data, >0 byte count of data
     u1_t        frame[MAX_LEN_FRAME];
 
+#if defined(LORAWAN_CLASSB)
     u1_t        bcnChnl;
-    u1_t        bcnRxsyms;    // 
+    u1_t        bcnRxsyms;    //
     ostime_t    bcnRxtime;
     bcninfo_t   bcninfo;      // Last received beacon info
+#endif
 };
 //! \var struct lmic_t LMIC
 //! The state of LMIC MAC layer is encapsulated in this variable.
 DECLARE_LMIC; //!< \internal
 
-//! Construct a bit map of allowed datarates from drlo to drhi (both included). 
+//! Construct a bit map of allowed datarates from drlo to drhi (both included).
 #define DR_RANGE_MAP(drlo,drhi) (((u2_t)0xFFFF<<(drlo)) & ((u2_t)0xFFFF>>(15-(drhi))))
 #if defined(CFG_eu868)
 enum { BAND_MILLI=0, BAND_CENTI=1, BAND_DECI=2, BAND_AUX=3 };
@@ -250,12 +254,14 @@ void  LMIC_setTxData    (void);
 int   LMIC_setTxData2   (u1_t port, xref2u1_t data, u1_t dlen, u1_t confirmed);
 void  LMIC_sendAlive    (void);
 
+#if defined(LORAWAN_CLASSB)
 bit_t LMIC_enableTracking  (u1_t tryBcnInfo);
 void  LMIC_disableTracking (void);
 
 void  LMIC_stopPingable  (void);
 void  LMIC_setPingable   (u1_t intvExp);
 void  LMIC_tryRejoin     (void);
+#endif
 
 void LMIC_setSession (u4_t netid, devaddr_t devaddr, xref2u1_t nwkKey, xref2u1_t artKey);
 void LMIC_setLinkCheckMode (bit_t enabled);

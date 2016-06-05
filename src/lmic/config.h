@@ -10,6 +10,9 @@
 //#define CFG_sx1272_radio 1
 #define CFG_sx1276_radio 1
 
+// Include Class B beacon/ping support?
+//#define LORAWAN_CLASSB 1
+
 // 50 μs per tick
 #define US_PER_OSTICK 50
 #define OSTICKS_PER_SEC (1000000 / US_PER_OSTICK)
