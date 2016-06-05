@@ -8,7 +8,7 @@
  * Contributors:
  *    IBM Zurich Research Lab - initial API, implementation and documentation
  *	  Maarten Westenberg - conditional compile
- *    Niels van Oord - Power setting repaired (bug) 
+ *    Niels van Oord - Power setting repaired (bug)
  *******************************************************************************/
 #define TEST 0
 
@@ -130,7 +130,7 @@ u2_t os_crc16 (xref2u1_t data, uint len) {
         for( u1_t bit = 8; bit > 0; bit--) {
             if( (remainder & 0x8000) )
                 remainder = (remainder << 1) ^ polynomial;
-            else 
+            else
                 remainder <<= 1;
         }
     }
@@ -212,7 +212,7 @@ static void aes_sessKeys (u2_t devnonce, xref2cu1_t artnonce, xref2u1_t nwkkey, 
     os_wlsbf2(nwkkey+1+LEN_ARTNONCE+LEN_NETID, devnonce);
     os_copyMem(artkey, nwkkey, 16);
     artkey[0] = 0x02;
-	
+
 #if TEST==1
 	Serial.print("aes_sessKeys"); Serial.println();
 #endif
@@ -374,13 +374,13 @@ static const u1_t DRADJUST[2+TXCONF_ATTEMPTS] = {
 
 // Table below defines the size of one symbol as
 //   symtime = 256us * 2^T(sf,bw)
-// 256us is called one symunit. 
-//                 SF:                                  
+// 256us is called one symunit.
+//                 SF:
 //      BW:      |__7___8___9__10__11__12
 //      125kHz   |  2   3   4   5   6   7
 //      250kHz   |  1   2   3   4   5   6
 //      500kHz   |  0   1   2   3   4   5
-//  
+//
 // Times for half symbol per DR
 // Per DR table to minimize rounding errors
 static const ostime_t DR2HSYM_osticks[] = {
@@ -497,7 +497,7 @@ static void txDelay (ostime_t reftime, u1_t secSpan) {
     }
 }
 
-
+#if defined(LORAWAN_OTAA)
 static void setDrJoin (u1_t reason, u1_t dr) {
     EV(drChange, INFO, (e_.reason    = reason,
                         e_.deveui    = MAIN::CDEV->getEui(),
@@ -508,7 +508,7 @@ static void setDrJoin (u1_t reason, u1_t dr) {
     LMIC.datarate = dr;
     DO_DEVDB(LMIC.datarate,datarate);
 }
-
+#endif
 
 static void setDrTxpow (u1_t reason, u1_t dr, s1_t pow) {
     EV(drChange, INFO, (e_.reason    = reason,
@@ -517,7 +517,7 @@ static void setDrTxpow (u1_t reason, u1_t dr, s1_t pow) {
                         e_.txpow     = pow,
                         e_.prevdr    = LMIC.datarate|DR_PAGE,
                         e_.prevtxpow = LMIC.adrTxPow));
-    
+
     if( pow != KEEP_TXPOW )
         LMIC.adrTxPow = pow;
 		LMIC.txpow = pow;
@@ -617,8 +617,8 @@ bit_t LMIC_setupChannel (u1_t chidx, u4_t freq, u2_t drmap, s1_t band) {
             freq |= BAND_DECI;   // 10% 27dBm
         else if( (freq >= 868000000 && freq <= 868600000) ||
                  (freq >= 869700000 && freq <= 870000000)  )
-            freq |= BAND_CENTI;  // 1% 14dBm 
-        else 
+            freq |= BAND_CENTI;  // 1% 14dBm
+        else
             freq |= BAND_MILLI;  // 0.1% 14dBm
     } else {
         if( band > BAND_AUX ) return 0;
@@ -706,6 +706,7 @@ static void setBcnRxParams (void) {
 
 #define setRx1Params() /*LMIC.freq/rps remain unchanged*/
 
+#if defined(LORAWAN_OTAA)
 static void initJoinLoop (void) {
     LMIC.txChnl = os_getRndU1() % 6;
     LMIC.adrTxPow = 14;
@@ -747,6 +748,7 @@ static ostime_t nextJoinState (void) {
     // 1 - triggers EV_JOIN_FAILED event
     return failed;
 }
+#endif
 
 //
 // END: EU868 related stuff
@@ -863,6 +865,7 @@ static void setBcnRxParams (void) {
     LMIC.rps = dndr2rps(LMIC.dndr);                                     \
 }
 
+#if defined(LORAWAN_OTAA)
 static void initJoinLoop (void) {
     LMIC.chRnd = 0;
     LMIC.txChnl = 0;
@@ -901,6 +904,7 @@ static ostime_t nextJoinState (void) {
     // 1 - triggers EV_JOIN_FAILED event
     return failed;
 }
+#endif
 
 //
 // END: US915 related stuff
@@ -928,7 +932,9 @@ static void reportEvent (ev_t ev) {
 static void runReset (xref2osjob_t osjob) {
     // Disable session
     LMIC_reset();
+#if defined(LORAWAN_OTAA)
     LMIC_startJoining();
+#endif
     reportEvent(EV_RESET);
 }
 
@@ -1050,14 +1056,14 @@ static bit_t decodeFrame (void) {
         if( (s4_t)seqno > (s4_t)LMIC.seqnoDn ) {
             EV(specCond, INFO, (e_.reason = EV::specCond_t::DNSEQNO_ROLL_OVER,
                                 e_.eui    = MAIN::CDEV->getEui(),
-                                e_.info   = LMIC.seqnoDn, 
+                                e_.info   = LMIC.seqnoDn,
                                 e_.info2  = seqno));
             goto norx;
         }
         if( seqno != LMIC.seqnoDn-1 || !LMIC.dnConf || ftype != HDR_FTYPE_DCDN ) {
             EV(specCond, INFO, (e_.reason = EV::specCond_t::DNSEQNO_OBSOLETE,
                                 e_.eui    = MAIN::CDEV->getEui(),
-                                e_.info   = LMIC.seqnoDn, 
+                                e_.info   = LMIC.seqnoDn,
                                 e_.info2  = seqno));
             goto norx;
         }
@@ -1069,7 +1075,7 @@ static bit_t decodeFrame (void) {
         if( seqno > LMIC.seqnoDn ) {
             EV(specCond, INFO, (e_.reason = EV::specCond_t::DNSEQNO_SKIP,
                                 e_.eui    = MAIN::CDEV->getEui(),
-                                e_.info   = LMIC.seqnoDn, 
+                                e_.info   = LMIC.seqnoDn,
                                 e_.info2  = seqno));
         }
         LMIC.seqnoDn = seqno+1;  // next number to be expected
@@ -1199,7 +1205,7 @@ static bit_t decodeFrame (void) {
                                        + ms2osticksCeil(MCMD_BCNI_TUNIT/2)
                                        - BCN_INTV_osticks);
                 LMIC.bcninfo.flags = 0;  // txtime above cannot be used as reference (BCN_PARTIAL|BCN_FULL cleared)
-                calcBcnRxWindowFromMillis(MCMD_BCNI_TUNIT,1);  // error of +/-N ms 
+                calcBcnRxWindowFromMillis(MCMD_BCNI_TUNIT,1);  // error of +/-N ms
 
                 EV(lostFrame, INFO, (e_.reason  = EV::lostFrame_t::MCMD_BCNI_ANS,
                                      e_.eui     = MAIN::CDEV->getEui(),
@@ -1331,7 +1337,7 @@ static void txDone (ostime_t delay, osjobcb_t func) {
     os_setTimedCallback(&LMIC.osjob, LMIC.rxtime - RX_RAMPUP, func);
 }
 
-
+#if defined(LORAWAN_OTAA)
 // ======================================== Join frames
 
 
@@ -1428,7 +1434,7 @@ static bit_t processJoinAccept (void) {
                         e_.reason  = ((LMIC.opmode & OP_REJOIN) != 0
                                       ? EV::joininfo_t::REJOIN_ACCEPT
                                       : EV::joininfo_t::ACCEPT)));
-    
+
     ASSERT((LMIC.opmode & (OP_JOINING|OP_REJOIN))!=0);
     if( (LMIC.opmode & OP_REJOIN) != 0 ) {
         // Lower DR every try below current UP DR
@@ -1468,6 +1474,7 @@ static void setupRx1Jacc (xref2osjob_t osjob) {
 static void jreqDone (xref2osjob_t osjob) {
     txDone(DELAY_JACC1_osticks, FUNC_ADDR(setupRx1Jacc));
 }
+#endif
 
 // ======================================== Data frames
 
@@ -1481,7 +1488,7 @@ static void processRx2DnDataDelay (xref2osjob_t osjob) {
 static void processRx2DnData (xref2osjob_t osjob) {
     if( LMIC.dataLen == 0 ) {
         LMIC.txrxFlags = 0;  // nothing in 1st/2nd DN slot
-        // Delay callback processing to avoid up TX while gateway is txing our missed frame! 
+        // Delay callback processing to avoid up TX while gateway is txing our missed frame!
         // Since DNW2 uses SF12 by default we wait 3 secs.
         os_setTimedCallback(&LMIC.osjob,
                             (os_getTime() + DNW2_SAFETY_ZONE + rndDelay(2)),
@@ -1513,7 +1520,7 @@ static void updataDone (xref2osjob_t osjob) {
     txDone(DELAY_DNW1_osticks, FUNC_ADDR(setupRx1DnData));
 }
 
-// ======================================== 
+// ========================================
 
 
 static void buildDataFrame (void) {
@@ -1704,7 +1711,7 @@ void LMIC_disableTracking (void) {
     engineUpdate();
 }
 
-
+#if defined(LORAWAN_OTAA)
 // ================================================================================
 //
 // Join stuff
@@ -1758,6 +1765,7 @@ bit_t LMIC_startJoining (void) {
     return 0; // already joined
 }
 
+#endif
 
 // ================================================================================
 //
@@ -1892,7 +1900,7 @@ static void processBeacon (xref2osjob_t osjob) {
         }
     }
     LMIC.bcnRxtime = LMIC.bcninfo.txtime + BCN_INTV_osticks - calcRxWindow(0,DR_BCN);
-    LMIC.bcnRxsyms = LMIC.rxsyms;    
+    LMIC.bcnRxsyms = LMIC.rxsyms;
   rev:
 #if CFG_us915
     LMIC.bcnChnl = (LMIC.bcnChnl+1) & 7;
@@ -1918,13 +1926,15 @@ static void startRxPing (xref2osjob_t osjob) {
 // Decide what to do next for the MAC layer of a device
 static void engineUpdate (void) {
     // Check for ongoing state: scan or TX/RX transaction
-    if( (LMIC.opmode & (OP_SCAN|OP_TXRXPEND|OP_SHUTDOWN)) != 0 ) 
+    if( (LMIC.opmode & (OP_SCAN|OP_TXRXPEND|OP_SHUTDOWN)) != 0 )
         return;
 
+#if defined(LORAWAN_OTAA)
     if( LMIC.devaddr == 0 && (LMIC.opmode & OP_JOINING) == 0 ) {
         LMIC_startJoining();
         return;
     }
+#endif
 
     ostime_t now    = os_getTime();
     ostime_t rxtime = 0;
@@ -1963,9 +1973,10 @@ static void engineUpdate (void) {
         // Earliest possible time vs overhead to setup radio
         if( txbeg - (now + TX_RAMPUP) < 0 ) {
             // We could send right now!
-        txbeg = now;
+            txbeg = now;
             dr_t txdr = (dr_t)LMIC.datarate;
             if( jacc ) {
+#if defined(LORAWAN_OTAA)
                 u1_t ftype;
                 if( (LMIC.opmode & OP_REJOIN) != 0 ) {
                     txdr = lowerDR(txdr, LMIC.rejoinCnt);
@@ -1975,12 +1986,13 @@ static void engineUpdate (void) {
                 }
                 buildJoinRequest(ftype);
                 LMIC.osjob.func = FUNC_ADDR(jreqDone);
+#endif
             } else {
                 if( LMIC.seqnoDn >= 0xFFFFFF80 ) {
                     // Imminent roll over - proactively reset MAC
                     EV(specCond, INFO, (e_.reason = EV::specCond_t::DNSEQNO_ROLL_OVER,
                                         e_.eui    = MAIN::CDEV->getEui(),
-                                        e_.info   = LMIC.seqnoDn, 
+                                        e_.info   = LMIC.seqnoDn,
                                         e_.info2  = 0));
                     // Device has to react! NWK will not roll over and just stop sending.
                     // Thus, we have N frames to detect a possible lock up.
@@ -2154,15 +2166,16 @@ void LMIC_sendAlive (void) {
     engineUpdate();
 }
 
-
+#if defined(LORAWAN_OTAA)
 // Check if other networks are around.
 void LMIC_tryRejoin (void) {
     LMIC.opmode |= OP_REJOIN;
     engineUpdate();
 }
+#endif
 
 //! \brief Setup given session keys
-//! and put the MAC in a state as if 
+//! and put the MAC in a state as if
 //! a join request/accept would have negotiated just these keys.
 //! It is crucial that the combinations `devaddr/nwkkey` and `devaddr/artkey`
 //! are unique within the network identified by `netid`.
@@ -2182,11 +2195,11 @@ void LMIC_setSession (u4_t netid, devaddr_t devaddr, xref2u1_t nwkKey, xref2u1_t
         os_copyMem(LMIC.nwkKey, nwkKey, 16);
     if( artKey != (xref2u1_t)0 )
         os_copyMem(LMIC.artKey, artKey, 16);
-    
+
 #if defined(CFG_eu868)
     initDefaultChannels(0);
 #endif
- 
+
     LMIC.opmode &= ~(OP_JOINING|OP_TRACK|OP_REJOIN|OP_TXRXPEND|OP_PINGINI);
     LMIC.opmode |= OP_NEXTCHNL;
     stateJustJoined();
@@ -2211,4 +2224,4 @@ void LMIC_setLinkCheckMode (bit_t enabled) {
     LMIC.adrAckReq = enabled ? LINK_CHECK_INIT : LINK_CHECK_OFF;
 }
 
- 
+

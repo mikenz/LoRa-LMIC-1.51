@@ -58,7 +58,7 @@ TYPEDEF_xref2band_t; //!< \internal
 
 #elif defined(CFG_us915)  // US915 spectrum =================================================
 
-enum { MAX_XCHANNELS = 2 };      // extra channels in RAM, channels 0-71 are immutable 
+enum { MAX_XCHANNELS = 2 };      // extra channels in RAM, channels 0-71 are immutable
 enum { MAX_TXPOW_125kHz = 30 };
 
 #endif // ==========================================================================
@@ -167,7 +167,7 @@ struct lmic_t {
     u1_t        txChnl;          // channel for next TX
     u1_t        globalDutyRate;  // max rate: 1/2^k
     ostime_t    globalDutyAvail; // time device can send again
-    
+
     u4_t        netid;        // current network id (~0 - none)
     u2_t        opmode;
     u1_t        upRepeat;     // configured up repeat
@@ -221,7 +221,7 @@ struct lmic_t {
     u1_t        frame[MAX_LEN_FRAME];
 
     u1_t        bcnChnl;
-    u1_t        bcnRxsyms;    // 
+    u1_t        bcnRxsyms;    //
     ostime_t    bcnRxtime;
     bcninfo_t   bcninfo;      // Last received beacon info
 };
@@ -229,7 +229,7 @@ struct lmic_t {
 //! The state of LMIC MAC layer is encapsulated in this variable.
 DECLARE_LMIC; //!< \internal
 
-//! Construct a bit map of allowed datarates from drlo to drhi (both included). 
+//! Construct a bit map of allowed datarates from drlo to drhi (both included).
 #define DR_RANGE_MAP(drlo,drhi) (((u2_t)0xFFFF<<(drlo)) & ((u2_t)0xFFFF>>(15-(drhi))))
 #if defined(CFG_eu868)
 enum { BAND_MILLI=0, BAND_CENTI=1, BAND_DECI=2, BAND_AUX=3 };
@@ -240,7 +240,10 @@ void  LMIC_disableChannel (u1_t channel);
 
 void  LMIC_setDrTxpow   (dr_t dr, s1_t txpow);  // set default/start DR/txpow
 void  LMIC_setAdrMode   (bit_t enabled);        // set ADR mode (if mobile turn off)
+
+#if defined(LORAWAN_OTAA)
 bit_t LMIC_startJoining (void);
+#endif
 
 void  LMIC_shutdown     (void);
 void  LMIC_init         (void);
