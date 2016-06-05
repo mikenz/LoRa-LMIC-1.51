@@ -852,11 +852,13 @@ static void _nextTx (void) {
     // No feasible channel  found! Keep old one.
 }
 
+#if defined(LORAWAN_CLASSB)
 static void setBcnRxParams (void) {
     LMIC.dataLen = 0;
     LMIC.freq = US915_500kHz_DNFBASE + LMIC.bcnChnl * US915_500kHz_DNFSTEP;
     LMIC.rps  = setIh(setNocrc(dndr2rps((dr_t)DR_BCN),1),LEN_BCN);
 }
+#endif
 
 #define setRx1Params() {                                                \
     LMIC.freq = US915_500kHz_DNFBASE + (LMIC.txChnl & 0x7) * US915_500kHz_DNFSTEP; \
