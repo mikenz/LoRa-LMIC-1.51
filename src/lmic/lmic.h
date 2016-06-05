@@ -58,7 +58,7 @@ TYPEDEF_xref2band_t; //!< \internal
 
 #elif defined(CFG_us915)  // US915 spectrum =================================================
 
-enum { MAX_XCHANNELS = 2 };      // extra channels in RAM, channels 0-71 are immutable 
+enum { MAX_XCHANNELS = 2 };      // extra channels in RAM, channels 0-71 are immutable
 enum { MAX_TXPOW_125kHz = 30 };
 
 #endif // ==========================================================================
@@ -244,7 +244,10 @@ void  LMIC_disableChannel (u1_t channel);
 
 void  LMIC_setDrTxpow   (dr_t dr, s1_t txpow);  // set default/start DR/txpow
 void  LMIC_setAdrMode   (bit_t enabled);        // set ADR mode (if mobile turn off)
+
+#if defined(LORAWAN_OTAA)
 bit_t LMIC_startJoining (void);
+#endif
 
 void  LMIC_shutdown     (void);
 void  LMIC_init         (void);

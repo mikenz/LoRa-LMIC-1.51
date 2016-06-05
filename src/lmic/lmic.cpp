@@ -497,7 +497,7 @@ static void txDelay (ostime_t reftime, u1_t secSpan) {
     }
 }
 
-
+#if defined(LORAWAN_OTAA)
 static void setDrJoin (u1_t reason, u1_t dr) {
     EV(drChange, INFO, (e_.reason    = reason,
                         e_.deveui    = MAIN::CDEV->getEui(),
@@ -508,7 +508,7 @@ static void setDrJoin (u1_t reason, u1_t dr) {
     LMIC.datarate = dr;
     DO_DEVDB(LMIC.datarate,datarate);
 }
-
+#endif
 
 static void setDrTxpow (u1_t reason, u1_t dr, s1_t pow) {
     EV(drChange, INFO, (e_.reason    = reason,
@@ -710,6 +710,7 @@ static void setBcnRxParams (void) {
 
 #define setRx1Params() /*LMIC.freq/rps remain unchanged*/
 
+#if defined(LORAWAN_OTAA)
 static void initJoinLoop (void) {
     LMIC.txChnl = os_getRndU1() % 6;
     LMIC.adrTxPow = 14;
@@ -751,6 +752,7 @@ static ostime_t nextJoinState (void) {
     // 1 - triggers EV_JOIN_FAILED event
     return failed;
 }
+#endif
 
 //
 // END: EU868 related stuff
@@ -867,6 +869,7 @@ static void setBcnRxParams (void) {
     LMIC.rps = dndr2rps(LMIC.dndr);                                     \
 }
 
+#if defined(LORAWAN_OTAA)
 static void initJoinLoop (void) {
     LMIC.chRnd = 0;
     LMIC.txChnl = 0;
@@ -905,6 +908,7 @@ static ostime_t nextJoinState (void) {
     // 1 - triggers EV_JOIN_FAILED event
     return failed;
 }
+#endif
 
 //
 // END: US915 related stuff
@@ -932,7 +936,9 @@ static void reportEvent (ev_t ev) {
 static void runReset (xref2osjob_t osjob) {
     // Disable session
     LMIC_reset();
+#if defined(LORAWAN_OTAA)
     LMIC_startJoining();
+#endif
     reportEvent(EV_RESET);
 }
 
@@ -1345,7 +1351,7 @@ static void txDone (ostime_t delay, osjobcb_t func) {
     os_setTimedCallback(&LMIC.osjob, LMIC.rxtime - RX_RAMPUP, func);
 }
 
-
+#if defined(LORAWAN_OTAA)
 // ======================================== Join frames
 
 
@@ -1482,6 +1488,7 @@ static void setupRx1Jacc (xref2osjob_t osjob) {
 static void jreqDone (xref2osjob_t osjob) {
     txDone(DELAY_JACC1_osticks, FUNC_ADDR(setupRx1Jacc));
 }
+#endif
 
 // ======================================== Data frames
 
@@ -1726,7 +1733,7 @@ void LMIC_disableTracking (void) {
 }
 #endif
 
-
+#if defined(LORAWAN_OTAA)
 // ================================================================================
 //
 // Join stuff
@@ -1779,9 +1786,9 @@ bit_t LMIC_startJoining (void) {
     }
     return 0; // already joined
 }
+#endif
 
 #if defined(LORAWAN_CLASSB)
-
 // ================================================================================
 //
 //
@@ -1951,10 +1958,12 @@ static void engineUpdate (void) {
     if( (LMIC.opmode & (OP_SCAN|OP_TXRXPEND|OP_SHUTDOWN)) != 0 )
         return;
 
+#if defined(LORAWAN_OTAA)
     if( LMIC.devaddr == 0 && (LMIC.opmode & OP_JOINING) == 0 ) {
         LMIC_startJoining();
         return;
     }
+#endif
 
     ostime_t now    = os_getTime();
     ostime_t rxtime = 0;
@@ -1995,9 +2004,10 @@ static void engineUpdate (void) {
         // Earliest possible time vs overhead to setup radio
         if( txbeg - (now + TX_RAMPUP) < 0 ) {
             // We could send right now!
-        txbeg = now;
+            txbeg = now;
             dr_t txdr = (dr_t)LMIC.datarate;
             if( jacc ) {
+#if defined(LORAWAN_OTAA)
                 u1_t ftype;
                 if( (LMIC.opmode & OP_REJOIN) != 0 ) {
                     txdr = lowerDR(txdr, LMIC.rejoinCnt);
@@ -2007,6 +2017,7 @@ static void engineUpdate (void) {
                 }
                 buildJoinRequest(ftype);
                 LMIC.osjob.func = FUNC_ADDR(jreqDone);
+#endif
             } else {
                 if( LMIC.seqnoDn >= 0xFFFFFF80 ) {
                     // Imminent roll over - proactively reset MAC
@@ -2191,12 +2202,13 @@ void LMIC_sendAlive (void) {
     engineUpdate();
 }
 
-
+#if defined(LORAWAN_OTAA)
 // Check if other networks are around.
 void LMIC_tryRejoin (void) {
     LMIC.opmode |= OP_REJOIN;
     engineUpdate();
 }
+#endif
 
 //! \brief Setup given session keys
 //! and put the MAC in a state as if

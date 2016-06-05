@@ -13,6 +13,9 @@
 // Include Class B beacon/ping support?
 //#define LORAWAN_CLASSB 1
 
+// Include support for Over The Air Activation
+//#define LORAWAN_OTAA 1
+
 // 50 μs per tick
 #define US_PER_OSTICK 50
 #define OSTICKS_PER_SEC (1000000 / US_PER_OSTICK)
