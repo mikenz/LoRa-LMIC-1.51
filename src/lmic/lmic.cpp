@@ -679,6 +679,9 @@ static void setBcnRxParams (void) {
     LMIC.freq = LMIC.channelFreq[LMIC.bcnChnl] & ~(u4_t)3;
     LMIC.rps  = setIh(setNocrc(dndr2rps((dr_t)DR_BCN),1),LEN_BCN);
 }
+#endif
+
+#if defined(LORAWAN_OTAA)
 
 static void initJoinLoop (void) {
     LMIC.txChnl = os_getRndU1() % 6;
@@ -1364,9 +1367,9 @@ static bit_t decodeFrame (void) {
             continue;
         }
         case MCMD_PING_SET: {
+            oidx += 4;
 #if defined(LORAWAN_CLASSB)
             u4_t freq = convFreq(&opts[oidx+1]);
-            oidx += 4;
             u1_t flags = 0x80;
             if( freq != 0 ) {
                 flags |= MCMD_PING_ANS_FQACK;
