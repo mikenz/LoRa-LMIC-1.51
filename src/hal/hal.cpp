@@ -192,14 +192,18 @@ void hal_init () {
 }
 
 void hal_failed (const char *file, u2_t line) {
-    Serial.println("FAILURE");
-    Serial.print(file);
-    Serial.print(':');
-    Serial.println(line);
-    Serial.flush();
+    //Serial.println("FAILURE");
+    //Serial.print(file);
+    //Serial.print(':');
+    //Serial.println(line);
+    //Serial.flush();
     hal_disableIRQs();
     while(1);
 }
 
-void debug(u4_t n) {Serial.println(n); Serial.flush();}
-void debug_str(const char *s) {Serial.println(s); Serial.flush();}
+void debug(u4_t n) {
+	//Serial.println(n); Serial.flush();
+}
+void debug_str(const char *s) {
+	//Serial.println(s); Serial.flush();
+}
