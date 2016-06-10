@@ -142,9 +142,9 @@ typedef s8_t  ostime_t;
 struct osjob_t;  // fwd decl.
 typedef void (*osjobcb_t) (struct osjob_t*);
 struct osjob_t {
-    struct osjob_t* next;
-    ostime_t deadline;
-    osjobcb_t  func;
+	struct osjob_t* next;
+	ostime_t deadline;
+	osjobcb_t  func;
 };
 TYPEDEF_xref2osjob_t;
 
@@ -218,11 +218,11 @@ u2_t os_crc16 (xref2u1_t d, uint len);
 #endif // !HAS_os_calls
 
 // ======================================================================
-// AES support 
+// AES support
 // !!Keep in sync with lorabase.hpp!!
 
 #ifndef AES_ENC  // if AES_ENC is defined as macro all other values must be too
-#define AES_ENC       0x00 
+#define AES_ENC       0x00
 #define AES_DEC       0x01
 #define AES_MIC       0x02
 #define AES_CTR       0x04

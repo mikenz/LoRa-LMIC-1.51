@@ -128,9 +128,9 @@ enum { EU868_F1 = 868100000,      // g1   SF7-12           used during join
        EU868_F4 = 867100000,      // g    SF7-12
        EU868_F5 = 867300000,      // g    SF7-12
        EU868_F6 = 867500000,      // g    SF7-12
-       EU868_F7 = 867700000,      // g    SF7-12
-       EU868_F8 = 867900000,      // g    SF7-12
-       EU868_F9 = 868800000,      // g2   FSK
+	   EU868_F7 = 867700000,      // g    SF7-12
+	   EU868_F8 = 867900000,      // g    SF7-12
+	   EU868_F9 = 868800000,      // g2   FSK
        EU868_DN = 869525000,      // g3   Downlink
 };
 enum { EU868_FREQ_MIN = 863000000,
@@ -149,7 +149,7 @@ enum { AIRTIME_BCN       = 144384 };  // micros
 
 enum {
     // Beacon frame format EU SF9
-    OFF_BCN_NETID    = 0,
+	OFF_BCN_NETID    = 0,
     OFF_BCN_TIME     = 3,
     OFF_BCN_CRC1     = 7,
     OFF_BCN_INFO     = 8,
@@ -190,7 +190,7 @@ enum { AIRTIME_BCN       = 72192 };  // micros
 
 enum {
     // Beacon frame format US SF10
-    OFF_BCN_NETID    = 0,
+	OFF_BCN_NETID    = 0,
     OFF_BCN_TIME     = 3,
     OFF_BCN_CRC1     = 7,
     OFF_BCN_INFO     = 9,

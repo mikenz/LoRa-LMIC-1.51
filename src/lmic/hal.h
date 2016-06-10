@@ -41,7 +41,7 @@ u1_t hal_spi (u1_t outval);
 
 /*
  * disable all CPU interrupts.
- *   - might be invoked nested 
+ *   - might be invoked nested
  *   - will be followed by matching call to hal_enableIRQs()
  */
 void hal_disableIRQs (void);
