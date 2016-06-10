@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 #include "lmic.h"
-#define TEST 0
+
 #if defined(__AVR__)
 #include <avr/pgmspace.h>
 #include <Arduino.h>
@@ -721,9 +721,6 @@ u1_t radio_rand1 () {
 	u1_t i = randbuf[0];
 	ASSERT( i != 0 );
 	if( i==16 ) {
-#if TEST==1
-		Serial.print("radio_rand1"); Serial.println();
-#endif
 		os_aes(AES_ENC, randbuf, 16); // encrypt seed with any key
 		i = 0;
 	}

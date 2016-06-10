@@ -39,10 +39,7 @@
 * Included direction in MIC calculation and encryption
 ****************************************************************************************/
 
-#define TEST 0
-#if TEST==1
-#include <Arduino.h>
-#endif
+
 /*
 *****************************************************************************************
 * INCLUDE FILES
@@ -52,13 +49,6 @@
 #include "lmic.h"
 #include "Encrypt_V30.h"
 #include "AES-128_V10.h"
-
-/*
-*****************************************************************************************
-* INCLUDE GLOBAL VARIABLES
-*****************************************************************************************
-*/
-
 
 // --------------------------------------------------------------------
 //
@@ -151,11 +141,6 @@ void Calculate_MIC(unsigned char *Data, unsigned char *Final_MIC, unsigned char 
 
 	unsigned char Block_B[16];
 	unsigned char Block_Counter = 0x01;
-
-#if TEST==1
-	Serial.print("AESkey "); for (i=0; i<16; i++) { if (AESkey[i]<16) Serial.print('0'); Serial.print(AESkey[i],HEX); }; Serial.println();
-	Serial.print("devadd "); Serial.print(LMIC.devaddr,HEX); Serial.println();
-#endif
 
 #if defined(LORAWAN_OTAA)
 	// Assume that for framecounter==0 we are starting all over and we do not want AESAUX
