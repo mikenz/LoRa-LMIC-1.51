@@ -66,23 +66,23 @@ enum { DR_PAGE = DR_PAGE_EU868 };
 //
 // Bands:
 //  g  :   1%  14dBm
-//  g1 :   1%  14dBm  
-//  g2 : 0.1%  14dBm  
-//  g3 :  10%  27dBm  
+//  g1 :   1%  14dBm
+//  g2 : 0.1%  14dBm
+//  g3 :  10%  27dBm
 //                 freq             band     datarates
 enum { EU868_F1 = 868100000,      // g1   SF7-12           used during join
-       EU868_F2 = 868300000,      // g1   SF7-12 SF7/250   ditto
-       EU868_F3 = 868500000,      // g1   SF7-12           ditto
-       EU868_F4 = 867100000,      // g    SF7-12
-       EU868_F5 = 867300000,      // g    SF7-12
-       EU868_F6 = 867500000,      // g    SF7-12
-       EU868_F7 = 867700000,      // g    SF7-12  
-       EU868_F8 = 867900000,      // g    SF7-12   
-       EU868_F9 = 868800000,      // g2   FSK   
-       EU868_DN = 869525000,      // g3   Downlink
+	   EU868_F2 = 868300000,      // g1   SF7-12 SF7/250   ditto
+	   EU868_F3 = 868500000,      // g1   SF7-12           ditto
+	   EU868_F4 = 867100000,      // g    SF7-12
+	   EU868_F5 = 867300000,      // g    SF7-12
+	   EU868_F6 = 867500000,      // g    SF7-12
+	   EU868_F7 = 867700000,      // g    SF7-12
+	   EU868_F8 = 867900000,      // g    SF7-12
+	   EU868_F9 = 868800000,      // g2   FSK
+	   EU868_DN = 869525000,      // g3   Downlink
 };
 enum { EU868_FREQ_MIN = 863000000,
-       EU868_FREQ_MAX = 870000000 };
+	   EU868_FREQ_MAX = 870000000 };
 
 enum { CHNL_PING         = 9 };
 enum { FREQ_PING         = EU868_DN };  // default ping freq
@@ -96,35 +96,35 @@ enum { DR_BCN            = DR_SF9 };
 enum { AIRTIME_BCN       = 144384 };  // micros
 
 enum {
-    // Beacon frame format EU SF9
-    OFF_BCN_NETID    = 0,         
-    OFF_BCN_TIME     = 3,
-    OFF_BCN_CRC1     = 7,
-    OFF_BCN_INFO     = 8,
-    OFF_BCN_LAT      = 9,
-    OFF_BCN_LON      = 12,
-    OFF_BCN_CRC2     = 15,
-    LEN_BCN          = 17
+	// Beacon frame format EU SF9
+	OFF_BCN_NETID    = 0,
+	OFF_BCN_TIME     = 3,
+	OFF_BCN_CRC1     = 7,
+	OFF_BCN_INFO     = 8,
+	OFF_BCN_LAT      = 9,
+	OFF_BCN_LON      = 12,
+	OFF_BCN_CRC2     = 15,
+	LEN_BCN          = 17
 };
 
 #elif defined(CFG_us915)  // =========================================
 
 enum _dr_us915_t { DR_SF10=0, DR_SF9, DR_SF8, DR_SF7, DR_SF8C, DR_NONE,
-                   // Devices behind a router:
-                   DR_SF12CR=8, DR_SF11CR, DR_SF10CR, DR_SF9CR, DR_SF8CR, DR_SF7CR };
+				   // Devices behind a router:
+				   DR_SF12CR=8, DR_SF11CR, DR_SF10CR, DR_SF9CR, DR_SF8CR, DR_SF7CR };
 enum { DR_DFLTMIN = DR_SF8C };
 enum { DR_PAGE = DR_PAGE_US915 };
 
 // Default frequency plan for US 915MHz
 enum { US915_125kHz_UPFBASE = 902300000,
-       US915_125kHz_UPFSTEP =    200000,
-       US915_500kHz_UPFBASE = 903000000,
-       US915_500kHz_UPFSTEP =   1600000,
-       US915_500kHz_DNFBASE = 923300000,
-       US915_500kHz_DNFSTEP =    600000
+	   US915_125kHz_UPFSTEP =    200000,
+	   US915_500kHz_UPFBASE = 903000000,
+	   US915_500kHz_UPFSTEP =   1600000,
+	   US915_500kHz_DNFBASE = 923300000,
+	   US915_500kHz_DNFSTEP =    600000
 };
 enum { US915_FREQ_MIN = 902000000,
-       US915_FREQ_MAX = 928000000 };
+	   US915_FREQ_MAX = 928000000 };
 
 enum { CHNL_PING         = 0 }; // used only for default init of state (follows beacon - rotating)
 enum { FREQ_PING         = US915_500kHz_DNFBASE + CHNL_PING*US915_500kHz_DNFSTEP };  // default ping freq
@@ -137,205 +137,205 @@ enum { DR_BCN            = DR_SF10CR };
 enum { AIRTIME_BCN       = 72192 };  // micros
 
 enum {
-    // Beacon frame format US SF10
-    OFF_BCN_NETID    = 0,         
-    OFF_BCN_TIME     = 3,
-    OFF_BCN_CRC1     = 7,
-    OFF_BCN_INFO     = 9,
-    OFF_BCN_LAT      = 10,
-    OFF_BCN_LON      = 13,
-    OFF_BCN_RFU1     = 16,
-    OFF_BCN_CRC2     = 17,
-    LEN_BCN          = 19
+	// Beacon frame format US SF10
+	OFF_BCN_NETID    = 0,
+	OFF_BCN_TIME     = 3,
+	OFF_BCN_CRC1     = 7,
+	OFF_BCN_INFO     = 9,
+	OFF_BCN_LAT      = 10,
+	OFF_BCN_LON      = 13,
+	OFF_BCN_RFU1     = 16,
+	OFF_BCN_CRC2     = 17,
+	LEN_BCN          = 19
 };
 
 #endif // ===================================================
 
 enum {
-    // Join Request frame format
-    OFF_JR_HDR      = 0,
-    OFF_JR_ARTEUI   = 1,
-    OFF_JR_DEVEUI   = 9,
-    OFF_JR_DEVNONCE = 17,
-    OFF_JR_MIC      = 19,
-    LEN_JR          = 23
+	// Join Request frame format
+	OFF_JR_HDR      = 0,
+	OFF_JR_ARTEUI   = 1,
+	OFF_JR_DEVEUI   = 9,
+	OFF_JR_DEVNONCE = 17,
+	OFF_JR_MIC      = 19,
+	LEN_JR          = 23
 };
 enum {
-    // Join Accept frame format
-    OFF_JA_HDR      = 0,
-    OFF_JA_ARTNONCE = 1,
-    OFF_JA_NETID    = 4,
-    OFF_JA_DEVADDR  = 7,
-    OFF_JA_RFU      = 11,
-    OFF_JA_DLSET    = 11,
-    OFF_JA_RXDLY    = 12,
-    OFF_CFLIST      = 13,
-    LEN_JA          = 17,
-    LEN_JAEXT       = 17+16
+	// Join Accept frame format
+	OFF_JA_HDR      = 0,
+	OFF_JA_ARTNONCE = 1,
+	OFF_JA_NETID    = 4,
+	OFF_JA_DEVADDR  = 7,
+	OFF_JA_RFU      = 11,
+	OFF_JA_DLSET    = 11,
+	OFF_JA_RXDLY    = 12,
+	OFF_CFLIST      = 13,
+	LEN_JA          = 17,
+	LEN_JAEXT       = 17+16
 };
 enum {
-    // Data frame format
-    OFF_DAT_HDR      = 0,
-    OFF_DAT_ADDR     = 1,
-    OFF_DAT_FCT      = 5,
-    OFF_DAT_SEQNO    = 6,
-    OFF_DAT_OPTS     = 8,
+	// Data frame format
+	OFF_DAT_HDR      = 0,
+	OFF_DAT_ADDR     = 1,
+	OFF_DAT_FCT      = 5,
+	OFF_DAT_SEQNO    = 6,
+	OFF_DAT_OPTS     = 8,
 };
 enum { MAX_LEN_PAYLOAD = MAX_LEN_FRAME-(int)OFF_DAT_OPTS-4 };
 enum {
-    // Bitfields in frame format octet
-    HDR_FTYPE   = 0xE0,
-    HDR_RFU     = 0x1C,
-    HDR_MAJOR   = 0x03
+	// Bitfields in frame format octet
+	HDR_FTYPE   = 0xE0,
+	HDR_RFU     = 0x1C,
+	HDR_MAJOR   = 0x03
 };
 enum { HDR_FTYPE_DNFLAG = 0x20 };  // flags DN frame except for HDR_FTYPE_PROP
 enum {
-    // Values of frame type bit field
-    HDR_FTYPE_JREQ   = 0x00,
-    HDR_FTYPE_JACC   = 0x20,
-    HDR_FTYPE_DAUP   = 0x40,  // data (unconfirmed) up
-    HDR_FTYPE_DADN   = 0x60,  // data (unconfirmed) dn
-    HDR_FTYPE_DCUP   = 0x80,  // data confirmed up
-    HDR_FTYPE_DCDN   = 0xA0,  // data confirmed dn
-    HDR_FTYPE_REJOIN = 0xC0,  // rejoin for roaming
-    HDR_FTYPE_PROP   = 0xE0
+	// Values of frame type bit field
+	HDR_FTYPE_JREQ   = 0x00,
+	HDR_FTYPE_JACC   = 0x20,
+	HDR_FTYPE_DAUP   = 0x40,  // data (unconfirmed) up
+	HDR_FTYPE_DADN   = 0x60,  // data (unconfirmed) dn
+	HDR_FTYPE_DCUP   = 0x80,  // data confirmed up
+	HDR_FTYPE_DCDN   = 0xA0,  // data confirmed dn
+	HDR_FTYPE_REJOIN = 0xC0,  // rejoin for roaming
+	HDR_FTYPE_PROP   = 0xE0
 };
 enum {
-    HDR_MAJOR_V1 = 0x00,
+	HDR_MAJOR_V1 = 0x00,
 };
 enum {
-    // Bitfields in frame control octet
-    FCT_ADREN  = 0x80,
-    FCT_ADRARQ = 0x40,
-    FCT_ACK    = 0x20,
-    FCT_MORE   = 0x10,   // also in DN direction: Class B indicator
-    FCT_OPTLEN = 0x0F,
+	// Bitfields in frame control octet
+	FCT_ADREN  = 0x80,
+	FCT_ADRARQ = 0x40,
+	FCT_ACK    = 0x20,
+	FCT_MORE   = 0x10,   // also in DN direction: Class B indicator
+	FCT_OPTLEN = 0x0F,
 };
 enum {
-    // In UP direction: signals class B enabled
-    FCT_CLASSB = FCT_MORE
+	// In UP direction: signals class B enabled
+	FCT_CLASSB = FCT_MORE
 };
 enum {
-    NWKID_MASK = (int)0xFE000000,
-    NWKID_BITS = 7
+	NWKID_MASK = (int)0xFE000000,
+	NWKID_BITS = 7
 };
 
 // MAC uplink commands   downwlink too
 enum {
-    // Class A
-    MCMD_LCHK_REQ = 0x02, // -  link check request : -
-    MCMD_LADR_ANS = 0x03, // -  link ADR answer    : u1:7-3:RFU, 3/2/1: pow/DR/Ch ACK
-    MCMD_DCAP_ANS = 0x04, // -  duty cycle answer  : -
-    MCMD_DN2P_ANS = 0x05, // -  2nd DN slot status : u1:7-2:RFU  1/0:datarate/channel ack
-    MCMD_DEVS_ANS = 0x06, // -  device status ans  : u1:battery 0,1-254,255=?, u1:7-6:RFU,5-0:margin(-32..31)
-    MCMD_SNCH_ANS = 0x07, // -  set new channel    : u1: 7-2=RFU, 1/0:DR/freq ACK
-    // Class B
-    MCMD_PING_IND = 0x10, // -  pingability indic  : u1: 7=RFU, 6-4:interval, 3-0:datarate
-    MCMD_PING_ANS = 0x11, // -  ack ping freq      : u1: 7-1:RFU, 0:freq ok
-    MCMD_BCNI_REQ = 0x12, // -  next beacon start  : -
+	// Class A
+	MCMD_LCHK_REQ = 0x02, // -  link check request : -
+	MCMD_LADR_ANS = 0x03, // -  link ADR answer    : u1:7-3:RFU, 3/2/1: pow/DR/Ch ACK
+	MCMD_DCAP_ANS = 0x04, // -  duty cycle answer  : -
+	MCMD_DN2P_ANS = 0x05, // -  2nd DN slot status : u1:7-2:RFU  1/0:datarate/channel ack
+	MCMD_DEVS_ANS = 0x06, // -  device status ans  : u1:battery 0,1-254,255=?, u1:7-6:RFU,5-0:margin(-32..31)
+	MCMD_SNCH_ANS = 0x07, // -  set new channel    : u1: 7-2=RFU, 1/0:DR/freq ACK
+	// Class B
+	MCMD_PING_IND = 0x10, // -  pingability indic  : u1: 7=RFU, 6-4:interval, 3-0:datarate
+	MCMD_PING_ANS = 0x11, // -  ack ping freq      : u1: 7-1:RFU, 0:freq ok
+	MCMD_BCNI_REQ = 0x12, // -  next beacon start  : -
 };
 
 // MAC downlink commands
 enum {
-    // Class A
-    MCMD_LCHK_ANS = 0x02, // link check answer  : u1:margin 0-254,255=unknown margin / u1:gwcnt
-    MCMD_LADR_REQ = 0x03, // link ADR request   : u1:DR/TXPow, u2:chmask, u1:chpage/repeat
-    MCMD_DCAP_REQ = 0x04, // duty cycle cap     : u1:255 dead [7-4]:RFU, [3-0]:cap 2^-k
-    MCMD_DN2P_SET = 0x05, // 2nd DN window param: u1:7-4:RFU/3-0:datarate, u3:freq
-    MCMD_DEVS_REQ = 0x06, // device status req  : -
-    MCMD_SNCH_REQ = 0x07, // set new channel    : u1:chidx, u3:freq, u1:DRrange
-    // Class B
-    MCMD_PING_SET = 0x11, // set ping freq      : u3: freq
-    MCMD_BCNI_ANS = 0x12, // next beacon start  : u2: delay(in TUNIT millis), u1:channel
+	// Class A
+	MCMD_LCHK_ANS = 0x02, // link check answer  : u1:margin 0-254,255=unknown margin / u1:gwcnt
+	MCMD_LADR_REQ = 0x03, // link ADR request   : u1:DR/TXPow, u2:chmask, u1:chpage/repeat
+	MCMD_DCAP_REQ = 0x04, // duty cycle cap     : u1:255 dead [7-4]:RFU, [3-0]:cap 2^-k
+	MCMD_DN2P_SET = 0x05, // 2nd DN window param: u1:7-4:RFU/3-0:datarate, u3:freq
+	MCMD_DEVS_REQ = 0x06, // device status req  : -
+	MCMD_SNCH_REQ = 0x07, // set new channel    : u1:chidx, u3:freq, u1:DRrange
+	// Class B
+	MCMD_PING_SET = 0x11, // set ping freq      : u3: freq
+	MCMD_BCNI_ANS = 0x12, // next beacon start  : u2: delay(in TUNIT millis), u1:channel
 };
 
 enum {
-    MCMD_BCNI_TUNIT = 30  // time unit of delay value in millis
+	MCMD_BCNI_TUNIT = 30  // time unit of delay value in millis
 };
 enum {
-    MCMD_LADR_ANS_RFU    = 0xF8, // RFU bits
-    MCMD_LADR_ANS_POWACK = 0x04, // 0=not supported power level
-    MCMD_LADR_ANS_DRACK  = 0x02, // 0=unknown data rate
-    MCMD_LADR_ANS_CHACK  = 0x01, // 0=unknown channel enabled
+	MCMD_LADR_ANS_RFU    = 0xF8, // RFU bits
+	MCMD_LADR_ANS_POWACK = 0x04, // 0=not supported power level
+	MCMD_LADR_ANS_DRACK  = 0x02, // 0=unknown data rate
+	MCMD_LADR_ANS_CHACK  = 0x01, // 0=unknown channel enabled
 };
 enum {
-    MCMD_DN2P_ANS_RFU    = 0xFC, // RFU bits
-    MCMD_DN2P_ANS_DRACK  = 0x02, // 0=unknown data rate
-    MCMD_DN2P_ANS_CHACK  = 0x01, // 0=unknown channel enabled
+	MCMD_DN2P_ANS_RFU    = 0xFC, // RFU bits
+	MCMD_DN2P_ANS_DRACK  = 0x02, // 0=unknown data rate
+	MCMD_DN2P_ANS_CHACK  = 0x01, // 0=unknown channel enabled
 };
 enum {
-    MCMD_SNCH_ANS_RFU    = 0xFC, // RFU bits
-    MCMD_SNCH_ANS_DRACK  = 0x02, // 0=unknown data rate
-    MCMD_SNCH_ANS_FQACK  = 0x01, // 0=rejected channel frequency
+	MCMD_SNCH_ANS_RFU    = 0xFC, // RFU bits
+	MCMD_SNCH_ANS_DRACK  = 0x02, // 0=unknown data rate
+	MCMD_SNCH_ANS_FQACK  = 0x01, // 0=rejected channel frequency
 };
 enum {
-    MCMD_PING_ANS_RFU   = 0xFE,
-    MCMD_PING_ANS_FQACK = 0x01
+	MCMD_PING_ANS_RFU   = 0xFE,
+	MCMD_PING_ANS_FQACK = 0x01
 };
 
 enum {
-    MCMD_DEVS_EXT_POWER   = 0x00, // external power supply
-    MCMD_DEVS_BATT_MIN    = 0x01, // min battery value
-    MCMD_DEVS_BATT_MAX    = 0xFE, // max battery value
-    MCMD_DEVS_BATT_NOINFO = 0xFF, // unknown battery level
+	MCMD_DEVS_EXT_POWER   = 0x00, // external power supply
+	MCMD_DEVS_BATT_MIN    = 0x01, // min battery value
+	MCMD_DEVS_BATT_MAX    = 0xFE, // max battery value
+	MCMD_DEVS_BATT_NOINFO = 0xFF, // unknown battery level
 };
 
 // Bit fields byte#3 of MCMD_LADR_REQ payload
 enum {
-    MCMD_LADR_CHP_125ON   = 0x60,  // special channel page enable, bits applied to 64..71
-    MCMD_LADR_CHP_125OFF  = 0x70,  //  ditto
-    MCMD_LADR_N3RFU_MASK  = 0x80,
-    MCMD_LADR_CHPAGE_MASK = 0xF0,
-    MCMD_LADR_REPEAT_MASK = 0x0F,
-    MCMD_LADR_REPEAT_1    = 0x01,
-    MCMD_LADR_CHPAGE_1    = 0x10
+	MCMD_LADR_CHP_125ON   = 0x60,  // special channel page enable, bits applied to 64..71
+	MCMD_LADR_CHP_125OFF  = 0x70,  //  ditto
+	MCMD_LADR_N3RFU_MASK  = 0x80,
+	MCMD_LADR_CHPAGE_MASK = 0xF0,
+	MCMD_LADR_REPEAT_MASK = 0x0F,
+	MCMD_LADR_REPEAT_1    = 0x01,
+	MCMD_LADR_CHPAGE_1    = 0x10
 };
 // Bit fields byte#0 of MCMD_LADR_REQ payload
 enum {
-    MCMD_LADR_DR_MASK    = 0xF0,
-    MCMD_LADR_POW_MASK   = 0x0F,
-    MCMD_LADR_DR_SHIFT   = 4,
-    MCMD_LADR_POW_SHIFT  = 0,
+	MCMD_LADR_DR_MASK    = 0xF0,
+	MCMD_LADR_POW_MASK   = 0x0F,
+	MCMD_LADR_DR_SHIFT   = 4,
+	MCMD_LADR_POW_SHIFT  = 0,
 #if defined(CFG_eu868)
-    MCMD_LADR_SF12      = DR_SF12<<4,
-    MCMD_LADR_SF11      = DR_SF11<<4,
-    MCMD_LADR_SF10      = DR_SF10<<4,
-    MCMD_LADR_SF9       = DR_SF9 <<4,
-    MCMD_LADR_SF8       = DR_SF8 <<4,
-    MCMD_LADR_SF7       = DR_SF7 <<4,
-    MCMD_LADR_SF7B      = DR_SF7B<<4,
-    MCMD_LADR_FSK       = DR_FSK <<4,
+	MCMD_LADR_SF12      = DR_SF12<<4,
+	MCMD_LADR_SF11      = DR_SF11<<4,
+	MCMD_LADR_SF10      = DR_SF10<<4,
+	MCMD_LADR_SF9       = DR_SF9 <<4,
+	MCMD_LADR_SF8       = DR_SF8 <<4,
+	MCMD_LADR_SF7       = DR_SF7 <<4,
+	MCMD_LADR_SF7B      = DR_SF7B<<4,
+	MCMD_LADR_FSK       = DR_FSK <<4,
 
-    MCMD_LADR_20dBm     = 0,
-    MCMD_LADR_14dBm     = 1,
-    MCMD_LADR_11dBm     = 2,
-    MCMD_LADR_8dBm      = 3,
-    MCMD_LADR_5dBm      = 4,
-    MCMD_LADR_2dBm      = 5,
+	MCMD_LADR_20dBm     = 0,
+	MCMD_LADR_14dBm     = 1,
+	MCMD_LADR_11dBm     = 2,
+	MCMD_LADR_8dBm      = 3,
+	MCMD_LADR_5dBm      = 4,
+	MCMD_LADR_2dBm      = 5,
 #elif defined(CFG_us915)
-    MCMD_LADR_SF10      = DR_SF10<<4,
-    MCMD_LADR_SF9       = DR_SF9 <<4,
-    MCMD_LADR_SF8       = DR_SF8 <<4,
-    MCMD_LADR_SF7       = DR_SF7 <<4,
-    MCMD_LADR_SF8C      = DR_SF8C<<4,
-    MCMD_LADR_SF12CR    = DR_SF12CR<<4,
-    MCMD_LADR_SF11CR    = DR_SF11CR<<4,
-    MCMD_LADR_SF10CR    = DR_SF10CR<<4,
-    MCMD_LADR_SF9CR     = DR_SF9CR<<4,
-    MCMD_LADR_SF8CR     = DR_SF8CR<<4,
-    MCMD_LADR_SF7CR     = DR_SF7CR<<4,
+	MCMD_LADR_SF10      = DR_SF10<<4,
+	MCMD_LADR_SF9       = DR_SF9 <<4,
+	MCMD_LADR_SF8       = DR_SF8 <<4,
+	MCMD_LADR_SF7       = DR_SF7 <<4,
+	MCMD_LADR_SF8C      = DR_SF8C<<4,
+	MCMD_LADR_SF12CR    = DR_SF12CR<<4,
+	MCMD_LADR_SF11CR    = DR_SF11CR<<4,
+	MCMD_LADR_SF10CR    = DR_SF10CR<<4,
+	MCMD_LADR_SF9CR     = DR_SF9CR<<4,
+	MCMD_LADR_SF8CR     = DR_SF8CR<<4,
+	MCMD_LADR_SF7CR     = DR_SF7CR<<4,
 
-    MCMD_LADR_30dBm     = 0,
-    MCMD_LADR_28dBm     = 1,
-    MCMD_LADR_26dBm     = 2,
-    MCMD_LADR_24dBm     = 3,
-    MCMD_LADR_22dBm     = 4,
-    MCMD_LADR_20dBm     = 5,
-    MCMD_LADR_18dBm     = 6,
-    MCMD_LADR_16dBm     = 7,
-    MCMD_LADR_14dBm     = 8,
-    MCMD_LADR_12dBm     = 9,
-    MCMD_LADR_10dBm     = 10
+	MCMD_LADR_30dBm     = 0,
+	MCMD_LADR_28dBm     = 1,
+	MCMD_LADR_26dBm     = 2,
+	MCMD_LADR_24dBm     = 3,
+	MCMD_LADR_22dBm     = 4,
+	MCMD_LADR_20dBm     = 5,
+	MCMD_LADR_18dBm     = 6,
+	MCMD_LADR_16dBm     = 7,
+	MCMD_LADR_14dBm     = 8,
+	MCMD_LADR_12dBm     = 9,
+	MCMD_LADR_10dBm     = 10
 #endif
 };
 
@@ -356,10 +356,10 @@ inline rps_t setNocrc(rps_t params, int nocrc) { return (rps_t)((params & ~0x80)
 inline int   getIh   (rps_t params)            { return        ((params >> 8) & 0xFF); }
 inline rps_t setIh   (rps_t params, int ih)    { return (rps_t)((params & ~0xFF00) | (ih<<8)); }
 inline rps_t makeRps (sf_t sf, bw_t bw, cr_t cr, int ih, int nocrc) {
-    return sf | (bw<<3) | (cr<<5) | (nocrc?(1<<7):0) | ((ih&0xFF)<<8);
+	return sf | (bw<<3) | (cr<<5) | (nocrc?(1<<7):0) | ((ih&0xFF)<<8);
 }
 #define MAKERPS(sf,bw,cr,ih,nocrc) ((rps_t)((sf) | ((bw)<<3) | ((cr)<<5) | ((nocrc)?(1<<7):0) | ((ih&0xFF)<<8)))
-// Two frames with params r1/r2 would interfere on air: same SFx + BWx 
+// Two frames with params r1/r2 would interfere on air: same SFx + BWx
 inline int sameSfBw(rps_t r1, rps_t r2) { return ((r1^r2)&0x1F) == 0; }
 
 extern const u1_t _DR2RPS_CRC[];

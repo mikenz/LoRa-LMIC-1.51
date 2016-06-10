@@ -5,7 +5,7 @@
 * Compagny:    Ideetron B.V.
 * Website:     http://www.ideetron.nl/LoRa
 * E-mail:      info@ideetron.nl
-* 
+*
 * This file is distributed under GPL 3 license
 *
 ******************************************************************************************/
@@ -17,7 +17,7 @@
 * Firmware Version 1.0
 * First version
 *
-* Feb 13, 2016: Modified by Maarten Westenberg (mw12554@hotmail.com) for conditional 
+* Feb 13, 2016: Modified by Maarten Westenberg (mw12554@hotmail.com) for conditional
 *				compile AND PROGMEM usage
 *
 ****************************************************************************************/
@@ -129,7 +129,7 @@ void AES_Encrypt(unsigned char *Data, unsigned char *Key)
 			State[Row][Collum] = AES_Sub_Byte(State[Row][Collum]);
 		}
 	}
- 
+
 	//Shift rows
 	AES_Shift_Rows();
 
@@ -175,7 +175,7 @@ void AES_Add_Round_Key(unsigned char *Round_Key)
 * Description : Function that substitutes a byte with a byte from the S_Table
 *
 * Arguments   : Byte    The byte that will be substituted
-* 
+*
 * Return      : The return is the found byte in the S_Table
 *****************************************************************************************
 */
