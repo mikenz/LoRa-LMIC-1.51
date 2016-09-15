@@ -38,7 +38,8 @@
 ****************************************************************************************/
 
 #include "AES-128_V10.h"
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
+#include <Arduino.h>
 #include <avr/pgmspace.h>
 #elif defined(ARDUINO_ARCH_ESP8266)
 #include <ESP.h>
@@ -56,7 +57,7 @@
 
 unsigned char State[4][4];
 
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 static const unsigned char S_Table [16][16] PROGMEM = {
 //unsigned char S_Table [16][16] = {
 #else
@@ -204,7 +205,7 @@ unsigned char AES_Sub_Byte(unsigned char Byte)
 	S_Collum = (Byte & 0x0F);
 
   //Find the correct byte in the S_Table
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 	S_Byte = pgm_read_byte_near( & S_Table[S_Row][S_Collum]);	// XXX When using PROGMEM
 #else
 	S_Byte = S_Table[S_Row][S_Collum];

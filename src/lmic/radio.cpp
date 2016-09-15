@@ -11,7 +11,7 @@
 
 #include "lmic.h"
 
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 #include <avr/pgmspace.h>
 #include <Arduino.h>
 #elif defined(ARDUINO_ARCH_ESP8266)
@@ -748,7 +748,7 @@ static const u2_t LORA_RXDONE_FIXUP[] = {
 
 // called by hal ext IRQ handler
 // (radio goes to stanby mode after tx/rx operations)
-void radio_irq_handler (u1_t dio) {
+void radio_irq_handler () {
 	ostime_t now = os_getTime();
 	if( (readReg(RegOpMode) & OPMODE_LORA) != 0) { // LORA modem
 		u1_t flags = readReg(LORARegIrqFlags);

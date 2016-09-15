@@ -14,10 +14,10 @@
  * If no sensor is connected the payload is '{"Hello":"World"}', that
  * will be processed by The Things Network server.
  *
- * Note: LoRaWAN per sub-band duty-cycle limitation is enforced (1% in g1, 
- *  0.1% in g2). 
+ * Note: LoRaWAN per sub-band duty-cycle limitation is enforced (1% in g1,
+ *  0.1% in g2).
  *
- * Change DevAddr to a unique address for your node 
+ * Change DevAddr to a unique address for your node
  * See http://thethingsnetwork.org/wiki/AddressSpace
  *
  * Do not forget to define the radio type correctly in config.h, default is:
@@ -31,7 +31,7 @@
 #define WAIT_SECS 120
 
 
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 #include <avr/pgmspace.h>
 #include <Arduino.h>
 #elif defined(ARDUINO_ARCH_ESP8266)
@@ -62,7 +62,7 @@ static const u1_t APPEUI[8] PROGMEM = { 0x02, 0x00, 0x00, 0x00, 0x00, 0xEE, 0xFF
 // Not used in this example
 static const u1_t DEVEUI[8] PROGMEM  = { 0x42, 0x42, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
 
-// LoRaWAN NwkSKey, network session key 
+// LoRaWAN NwkSKey, network session key
 // Use this key for The Things Network
 unsigned char NwkSkey[16] = { 0x2B, 0x7E, 0x15, 0x16, 0x28, 0xAE, 0xD2, 0xA6, 0xAB, 0xF7, 0x15, 0x88, 0x09, 0xCF, 0x4F, 0x3C };
 
@@ -82,17 +82,17 @@ u4_t DevAddr = 0x01010101;
 
 // provide application router ID (8 bytes, LSBF)
 void os_getArtEui (u1_t* buf) {
-    memcpy(buf, APPEUI, 8);
+	memcpy(buf, APPEUI, 8);
 }
 
 // provide device ID (8 bytes, LSBF)
 void os_getDevEui (u1_t* buf) {
-    memcpy(buf, DEVEUI, 8);
+	memcpy(buf, DEVEUI, 8);
 }
 
 // provide device key (16 bytes)
 void os_getDevKey (u1_t* buf) {
-    memcpy(buf, NwkSkey, 16);
+	memcpy(buf, NwkSkey, 16);
 }
 
 int debug=1;
@@ -109,53 +109,53 @@ lmic_pinmap pins = {
   .txen = 0, 			// Needed for NiceRF Lora1276. Not needed for RFM92/RFM95
   .rst = 0,  			// Needed on RFM92/RFM95? (probably not) D0/GPIO16
   .dio = {5, 4, 3},		// Specify pin numbers for DIO0, 1, 2
-						// connected to D5, D4, D3 
+						// connected to D5, D4, D3
 };
 
 void onEvent (ev_t ev) {
-    //debug_event(ev);
+	//debug_event(ev);
 
-    switch(ev) {
-      // scheduled data sent (optionally data received)
-      // note: this includes the receive window!
-      case EV_TXCOMPLETE:
-          // use this event to keep track of actual transmissions
-          Serial.print("EV_TXCOMPLETE, time: ");
-          Serial.println(millis() / 1000);
-          if(LMIC.dataLen) { // data received in rx slot after tx
-              //debug_buf(LMIC.frame+LMIC.dataBeg, LMIC.dataLen);
-              Serial.println("Data Received");
-          }
-          break;
-       default:
-          break;
-    }
+	switch(ev) {
+	  // scheduled data sent (optionally data received)
+	  // note: this includes the receive window!
+	  case EV_TXCOMPLETE:
+		  // use this event to keep track of actual transmissions
+		  Serial.print("EV_TXCOMPLETE, time: ");
+		  Serial.println(millis() / 1000);
+		  if(LMIC.dataLen) { // data received in rx slot after tx
+			  //debug_buf(LMIC.frame+LMIC.dataBeg, LMIC.dataLen);
+			  Serial.println("Data Received");
+		  }
+		  break;
+	   default:
+		  break;
+	}
 }
 
 void do_send(osjob_t* j){
 	  delay(1);													// XXX delay is added for Serial
-      Serial.print("Time: ");
-      Serial.println(millis() / 1000);
-      // Show TX channel (channel numbers are local to LMIC)
-      Serial.print("Send, txCnhl: ");
-      Serial.println(LMIC.txChnl);
-      Serial.print("Opmode check: ");
-      // Check if there is not a current TX/RX job running
-    if (LMIC.opmode & (1 << 7)) {
-      Serial.println("OP_TXRXPEND, not sending");
-    } 
+	  Serial.print("Time: ");
+	  Serial.println(millis() / 1000);
+	  // Show TX channel (channel numbers are local to LMIC)
+	  Serial.print("Send, txCnhl: ");
+	  Serial.println(LMIC.txChnl);
+	  Serial.print("Opmode check: ");
+	  // Check if there is not a current TX/RX job running
+	if (LMIC.opmode & (1 << 7)) {
+	  Serial.println("OP_TXRXPEND, not sending");
+	}
 	else {
-	
+
 
 	  strcpy((char *) mydata,"{\"Hello\":\"World\"}");
 
-	  Serial.print("ready to send: "); 
+	  Serial.print("ready to send: ");
 	  Serial.println((char *)mydata);
 	  LMIC_setTxData2(1, mydata, strlen((char *)mydata), 0);
-    }
-    // Schedule a timed job to run at the given timestamp (absolute system time)
-    os_setTimedCallback(j, os_getTime()+sec2osticks(WAIT_SECS), do_send);
-         
+	}
+	// Schedule a timed job to run at the given timestamp (absolute system time)
+	os_setTimedCallback(j, os_getTime()+sec2osticks(WAIT_SECS), do_send);
+
 }
 
 // ====================================================================
@@ -163,12 +163,12 @@ void do_send(osjob_t* j){
 //
 void setup() {
   Serial.begin(115200);
-  
+
   // LMIC init
   os_init();
   // Reset the MAC state. Session and pending data transfers will be discarded.
   LMIC_reset();
-  // Set static session parameters. Instead of dynamically establishing a session 
+  // Set static session parameters. Instead of dynamically establishing a session
   // by joining the network, precomputed session parameters are be provided.
   LMIC_setSession (0x1, DevAddr, (uint8_t*)NwkSkey, (uint8_t*)AppSkey);
   // Disable data rate adaptation

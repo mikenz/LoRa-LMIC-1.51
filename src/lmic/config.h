@@ -16,7 +16,7 @@
 // Include support for Over The Air Activation
 //#define LORAWAN_OTAA 1
 
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 #define US_PER_OSTICK 30		// 50 works for Atmega 328/16MHz with little debug messaging. 30 seems to be working better
 #elif defined(ARDUINO_ARCH_ESP8266)
 #define US_PER_OSTICK 20		// To be determined

@@ -13,7 +13,7 @@
 
 //! \file
 #include "lmic.h"
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 #include <avr/pgmspace.h>
 #include <Arduino.h>
 #elif defined(ARDUINO_ARCH_ESP8266)

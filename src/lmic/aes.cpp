@@ -21,7 +21,7 @@
 
 #include "oslmic.h"
 
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 #include <avr/pgmspace.h>
 #include <Arduino.h>
 #define AESMINI 1
@@ -152,7 +152,7 @@ static const u1_t AES_S[256] = {
 };
 
 
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 static const u4_t AES_E1[256] PROGMEM = {
 #else
 static const u4_t AES_E1[256] = {
@@ -191,7 +191,7 @@ static const u4_t AES_E1[256] = {
 	0x824141C3, 0x299999B0, 0x5A2D2D77, 0x1E0F0F11, 0x7BB0B0CB, 0xA85454FC, 0x6DBBBBD6, 0x2C16163A,
 };
 
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 static const u4_t AES_E2[256] PROGMEM = {
 #else
 static const u4_t AES_E2[256] = {
@@ -230,7 +230,7 @@ static const u4_t AES_E2[256] = {
 	0xC3824141, 0xB0299999, 0x775A2D2D, 0x111E0F0F, 0xCB7BB0B0, 0xFCA85454, 0xD66DBBBB, 0x3A2C1616,
 };
 
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 static const u4_t AES_E3[256] PROGMEM = {
 #else
 static const u4_t AES_E3[256] = {
@@ -269,7 +269,7 @@ static const u4_t AES_E3[256] = {
 	0x41C38241, 0x99B02999, 0x2D775A2D, 0x0F111E0F, 0xB0CB7BB0, 0x54FCA854, 0xBBD66DBB, 0x163A2C16,
 };
 
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(ARDUINO_SAMD_ZERO)
 static const u4_t AES_E4[256] PROGMEM = {
 #else
 static const u4_t AES_E4[256] = {
