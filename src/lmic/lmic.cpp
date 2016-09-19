@@ -535,9 +535,12 @@ static void setDrTxpow (u1_t reason, u1_t dr, s1_t pow) {
 						e_.prevdr    = LMIC.datarate|DR_PAGE,
 						e_.prevtxpow = LMIC.adrTxPow));
 
-	if( pow != KEEP_TXPOW )
+	if( pow != KEEP_TXPOW ) {
 		LMIC.adrTxPow = pow;
+		 if (pow < LMIC.txpow_limit) {
 		LMIC.txpow = pow;
+		 }
+	}
 	if( LMIC.datarate != dr ) {
 		LMIC.datarate = dr;
 		DO_DEVDB(LMIC.datarate,datarate);
@@ -598,6 +601,10 @@ static void initDefaultChannels() {
 	// Channel 9 only allows SF7
 	LMIC.channelDrMap[8] = DR_RANGE_MAP(DR_SF7B, DR_SF7B);
 	LMIC.datarate = DR_SF7;
+
+	LMIC.txpow_limit = 30;
+	LMIC.txpow = LMIC.txpow_limit;
+	LMIC.adrTxPow = LMIC.txpow_limit;
 }
 
 bit_t LMIC_setupChannel (u1_t chidx, u4_t freq, u2_t drmap, s1_t band) {
@@ -638,7 +645,8 @@ static u1_t mapChannels (u1_t chpage, u2_t chmap) {
 static void updateTx (ostime_t txbeg) {
 	// Update frequency
 	LMIC.freq  = LMIC.channelFreq[LMIC.txChnl];
-	LMIC.txpow = 26;
+
+	LMIC.txpow_limit = 25;
 
 	// Update global duty cycle stats
 	ostime_t airtime = calcAirTime(LMIC.rps, LMIC.dataLen);
@@ -835,7 +843,8 @@ static void updateTx (ostime_t txbeg) {
 	xref2band_t band = &LMIC.bands[freq & 0x3];
 	LMIC.freq  = freq & ~(u4_t)3;
 
-	//LMIC.txpow = band->txpow;
+	LMIC.txpow_limit = band->txpow;
+
 	band->avail = txbeg + airtime * band->txcap;
 	if( LMIC.globalDutyRate != 0 )
 		LMIC.globalDutyAvail = txbeg + (airtime<<LMIC.globalDutyRate);
@@ -1753,8 +1762,9 @@ static void buildDataFrame (void) {
 	}
 #endif
 	if( LMIC.adrChanged ) {
-		if( LMIC.adrAckReq < 0 )
+		if( LMIC.adrAckReq != LINK_CHECK_OFF ) {
 			LMIC.adrAckReq = 0;
+		}
 		LMIC.adrChanged = 0;
 	}
 #if defined(LORAWAN_CLASSB)
@@ -2417,7 +2427,7 @@ void LMIC_setSession (u4_t netid, devaddr_t devaddr, xref2u1_t nwkKey, xref2u1_t
 // Enable/disable link check validation.
 // LMIC sets the ADRACKREQ bit in UP frames if there were no DN frames
 // for a while. It expects the network to provide a DN message to prove
-// connectivity with a span of UP frames. If this no such prove is coming
+// connectivity with a span of UP frames. If this no such proof is coming
 // then the datarate is lowered and a LINK_DEAD event is generated.
 // This mode can be disabled and no connectivity prove (ADRACKREQ) is requested
 // nor is the datarate changed.
