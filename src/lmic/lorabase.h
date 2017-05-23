@@ -68,16 +68,16 @@ enum _dr_kotahi_t {
 enum { DR_DFLTMIN = DR_SF7 };
 enum { DR_PAGE = DR_PAGE_EU868 };
 
-enum { KOTAHI_F1 = 865000000,      // g   SF7-12/125
-       KOTAHI_F2 = 865200000,      // g   SF7-12/125
-       KOTAHI_F3 = 865400000,      // g   SF7-12/125
-       KOTAHI_F4 = 866200000,      // g   SF7-12/125
-       KOTAHI_F5 = 866400000,      // g   SF7-12/125
-       KOTAHI_F6 = 866600000,      // g   SF7-12/125
-       KOTAHI_F7 = 866800000,      // g   SF7-12/125
-       KOTAHI_F8 = 867000000,      // g   SF7-12/125
-       KOTAHI_F9 = 865600000,      // g   SF7/250
-       KOTAHI_DN = 867200000,      // g   Downlink
+enum { KOTAHI_F1 = 864862500,      // g   SF7-12/125
+       KOTAHI_F2 = 865062500,      // g   SF7-12/125
+       KOTAHI_F3 = 865402500,      // g   SF7-12/125
+       KOTAHI_F4 = 865602500,      // g   SF7-12/125
+       KOTAHI_F5 = 865985000,      // g   SF7-12/125
+       KOTAHI_F6 = 866200000,      // g   SF7-12/125
+       KOTAHI_F7 = 866400000,      // g   SF7-12/125
+       KOTAHI_F8 = 866600000,      // g   SF7-12/125
+       KOTAHI_F9 = 865062500,      // g   SF7/250
+       KOTAHI_DN = 866550000,      // g   Downlink
 };
 
 enum { KOTAHI_FREQ_MIN = 863000000,
